@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="client" class="simpleapp.beans.Client" >
+        <constructor-arg value="1" />
+        <constructor-arg value="John Smith" />
+    </bean>
+
+
+    <bean id="eventLogger" class="simpleapp.loggers.ConsoleEventLogger" />
+
+    <bean id="app" class="simpleapp.App">
+        <constructor-arg ref="cacheFileWriter"/>
+        <constructor-arg ref="client" />
+    </bean>
+
+    <bean id="event" class="simpleapp.beans.Event" scope="prototype">
+        <constructor-arg>
+            <bean class="java.util.Date" />
+        </constructor-arg>
+        <constructor-arg ref="dateFormat" />
+        <!--<property name="msg" value="Hello World" />-->
+    </bean>
+
+    <bean id="dateFormat" class="java.text.DateFormat" factory-method="getDateTimeInstance" />
+
+    <bean id="fileEventLogger" class="simpleapp.loggers.FileEventLogger" init-method="init">
+        <constructor-arg value="target/events_log.txt" />
+    </bean>
+
+    <bean id="cacheFileWriter" class="simpleapp.loggers.CacheFileEventLogger" destroy-method="destroy" >
+        <constructor-arg value="target/events_log.txt" />
+        <constructor-arg index="1" value="3" />
+    </bean>
+
+</beans>
